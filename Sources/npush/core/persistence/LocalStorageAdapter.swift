@@ -11,7 +11,7 @@ import Foundation
 public protocol LocalStorageAdapter {
     
     
-    func get(key: String) -> String
+    func get(key: String) -> String?
     
     func put(key: String, value: String)
     

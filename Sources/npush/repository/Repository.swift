@@ -11,13 +11,14 @@ public protocol Repository {
     
     associatedtype T 
     
-    func Get() throws -> T
+    func get() throws -> T?
     
-    func Add(element: T) throws -> T
+    func add(element: T) throws -> T
     
-    func Exist() -> Bool
+    func exist() -> Bool
     
 }
+
 
 
 

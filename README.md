@@ -1,4 +1,5 @@
 # NPush SDK for IOS 
+NP6 IOS SDK for Push Notification - The game changing libraries for building Blazingly fast 🚀 Highly interactives notification user experiences. Made with ❤️ 
 
 ## Introduction 
 This library is a part of NP6 Push Notifications service, it allow you to interact with your users via Push Notifications sended via NP6 CM. 
@@ -187,21 +188,6 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 }
 
 @end
-```
-### Deeplinking 
-
-
-In order to handle deeplink by our way, whe can extends our application delegate class with the NPushDeeplinkDelegate protocol an use it as follow : 
-```swift
-
-class MyAppDelegate: ... , NPushDeeplinkDelegate {
-
-    func handleDeeplink(deeplink: String) {
-        // your code here
-    
-    }
-
-}
 ```
 
 

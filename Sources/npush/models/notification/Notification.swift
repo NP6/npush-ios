@@ -8,11 +8,18 @@
 import Foundation
 
 
-public class Notification : Identifiable, Codable {
+public class Notification {
     
-    public var title: String;
+    public var meta: Meta;
     
-    public var body: String;
+    public var tracking: Tracking;
     
-    public var deeplink: String;
+    public var render: Render;
+    
+    public init(meta: Meta, tracking: Tracking, render: Render) {
+        self.meta = meta
+        self.tracking = tracking
+        self.render = render
+    }
+    
 }

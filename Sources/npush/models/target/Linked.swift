@@ -39,11 +39,14 @@ public enum ContactType : Int, RawRepresentable {
                   return nil
           }
       }
+    
+    
 }
 
-
 public class Linked : Codable {
+    
     public var type: String
+    
     public var value: String
     
     init(type: String, identifier: String) {
@@ -68,4 +71,16 @@ public class Linked : Codable {
         try container.encode(value, forKey: .value)
     }
 
+    public static func fromContactType(_ contactType: ContactType, _ value: String) -> Linked {
+        switch (contactType) {
+            case .HashRepresentation:
+                return Linked(type: "hash", identifier: value)
+            case .IdRepresentation:
+                return Linked(type: "id", identifier: value)
+            case .UnicityRepresentation:
+                return Linked(type: "unicity", identifier: value)
+        }
+    }
+
 }
+

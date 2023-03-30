@@ -7,22 +7,22 @@
 
 import Foundation
 
-public class TokenRepository : Repository {
+public class IdentifierRepository : Repository {
     
     public var localStorage: LocalStorageAdapter;
     
-    public let key: String = "token";
+    public let key: String = "identifier";
     
-    public static let namespace: String = "np6.repository.token";
+    public static let namespace: String = "np6.repository.identifier";
 
-    public static func create() -> TokenRepository {
-        let userStorage: UserDefaultStorage = UserDefaultStorage(namespace: TokenRepository.namespace)
-        return TokenRepository(localStorage: userStorage)
+    public static func create() -> IdentifierRepository {
+        let userStorage: UserDefaultStorage = UserDefaultStorage(namespace: IdentifierRepository.namespace)
+        return IdentifierRepository(localStorage: userStorage)
     }
     
     public init(localStorage: LocalStorageAdapter) {
         self.localStorage = localStorage;
-    }
+     }
     
     public func get() -> String? {
         return self.localStorage.get(key: self.key)

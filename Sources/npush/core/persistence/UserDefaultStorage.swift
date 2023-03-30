@@ -15,8 +15,8 @@ public class UserDefaultStorage : LocalStorageAdapter {
         self.userDefault = UserDefaults.init(suiteName: namespace) ?? UserDefaults.standard
     }
     
-    public func get(key: String) -> String {
-        return userDefault.string(forKey: key) ?? ""
+    public func get(key: String) -> String? {
+        return userDefault.string(forKey: key)
     }
     
     public func put(key: String, value: String) {

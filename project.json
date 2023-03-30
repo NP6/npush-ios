@@ -1,0 +1,98 @@
+{
+  "dependencies" : [
+    {
+      "identity" : "mockingbird",
+      "requirement" : {
+        "range" : [
+          {
+            "lower_bound" : "0.20.0",
+            "upper_bound" : "0.21.0"
+          }
+        ]
+      },
+      "type" : "sourceControl",
+      "url" : "https://github.com/birdrides/mockingbird.git"
+    }
+  ],
+  "manifest_display_name" : "npush",
+  "name" : "npush",
+  "path" : "/Users/bisenbrandt/dev/sdk/npush-ios",
+  "platforms" : [
+
+  ],
+  "products" : [
+    {
+      "name" : "npush",
+      "targets" : [
+        "npush"
+      ],
+      "type" : {
+        "library" : [
+          "automatic"
+        ]
+      }
+    }
+  ],
+  "targets" : [
+    {
+      "c99name" : "npushTests",
+      "module_type" : "SwiftTarget",
+      "name" : "npushTests",
+      "path" : "Tests/npushTests",
+      "product_dependencies" : [
+        "Mockingbird"
+      ],
+      "sources" : [
+        "DefaultStorageTests.swift",
+        "InstallationTests.swift",
+        "LocalStorageTests.swift",
+        "MockingbirdMocks.swift",
+        "RepositoryTests.swift"
+      ],
+      "target_dependencies" : [
+        "npush"
+      ],
+      "type" : "test"
+    },
+    {
+      "c99name" : "npush",
+      "module_type" : "SwiftTarget",
+      "name" : "npush",
+      "path" : "Sources/npush",
+      "product_memberships" : [
+        "npush"
+      ],
+      "sources" : [
+        "Config.swift",
+        "Installation.swift",
+        "NPush.swift",
+        "NotificationCenter.swift",
+        "api/InteractionApi.swift",
+        "api/SubscriptionApi.swift",
+        "core/DeeplinkDelegate.swift",
+        "core/Logger.swift",
+        "core/ServiceUrls.swift",
+        "core/persistence/LocalStorage.swift",
+        "core/persistence/LocalStorageAdapter.swift",
+        "core/persistence/UserDefaultStorage.swift",
+        "models/Detail.swift",
+        "models/Subscription.swift",
+        "models/Telemetry.swift",
+        "models/action/Action.swift",
+        "models/gateway/Gateway.swift",
+        "models/notification/Notification.swift",
+        "models/notification/input/Meta.swift",
+        "models/notification/input/Render.swift",
+        "models/notification/input/Stamp.swift",
+        "models/notification/input/Tracking.swift",
+        "models/target/Linked.swift",
+        "repository/IdentifierRepository.swift",
+        "repository/Repository.swift",
+        "repository/TokenRepository.swift",
+        "services/NotificationService.swift"
+      ],
+      "type" : "library"
+    }
+  ],
+  "tools_version" : "5.6"
+}

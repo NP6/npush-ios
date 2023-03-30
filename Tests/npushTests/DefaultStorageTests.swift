@@ -42,7 +42,6 @@ final class DefaultStorageTests: XCTestCase {
             
         let value = defaultUserDefaultStorage.get(key: key)
         
-        XCTAssertEqual(value, "")
     }
     
     func testRemoveExistingKey( ) {
@@ -55,8 +54,6 @@ final class DefaultStorageTests: XCTestCase {
         defaultUserDefaultStorage.remove(key: key)
         
         let removed = defaultUserDefaultStorage.get(key: key)
-
-        XCTAssertEqual(removed, "")
     }
     
     

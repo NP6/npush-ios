@@ -10,104 +10,92 @@ import Foundation
 
 public class Installation {
     
+    public let identifierRepository: IdentifierRepository;
     
-    public enum InstallationResult<Found, NotFound> {
-        case found(Found)
-        case notfound(NotFound)
-    }
-
-    public static let shared = Installation.init(
-        identifierRepository: IdentifierRepository.init(
-            localStorage: LocalStorage.init(
-                adapter: UserDefaultStorage.init(namespace: "identifier")
-            )
-        )
-    )
+    public let tokenRepository: TokenRepository;
     
-    private var identifierRepository: IdentifierRepository
+    public final let config: Config;
     
-    public init(identifierRepository: IdentifierRepository) {
-        self.identifierRepository = identifierRepository
+    public let subscriptionApi: SubscriptionApi;
+        
+    public enum InstallationError : Error {
+        case InvalidToken
+        case EmptyOrNullToken
+        case InvalidIdentifier
     }
     
-    
-    public enum TokenError : Error {
-        case InvalidTokenDeserialization
+    public static func create(_ config: Config) -> Installation {
+        
+        let identifierRepository = IdentifierRepository.create();
+        
+        let tokenRepository = TokenRepository.create();
+        
+        let subscriptionApi = SubscriptionApi.create(config.identity)
+        
+        return Installation(
+            config,
+            identifierRepository,
+            tokenRepository,
+            subscriptionApi
+        );
+    }
+        
+    public init(
+        _ config: Config,
+        _ identifierRepository: IdentifierRepository,
+        _ tokenRepository: TokenRepository,
+        _ subscriptionApi: SubscriptionApi)
+    {
+        self.config = config;
+        self.identifierRepository = identifierRepository;
+        self.tokenRepository = tokenRepository;
+        self.subscriptionApi = subscriptionApi;
     }
     
-    
-    public func CheckIfTokenExist(completion: @escaping (Result<String, Error>) -> Void) {
-        do {
-            let token = try TokenService.shared.get()
-            completion(.success(token))
-        } catch {
-            completion(.failure(TokenError.InvalidTokenDeserialization))
-        }
+    public func getIdentifier() -> String? {
+        return self.identifierRepository.exist()
+        ? self.identifierRepository.get()
+        : self.identifierRepository.add(element: UUID().uuidString)
         
     }
     
-    public func Install(
-        _ config: Config,
-        _ linked: Linked,
-        _ identity: String,
-        completion: @escaping (Result<Subscription, Error>) -> Void) {
+    public func subscribe(_ linked: Linked, completion: @escaping (Result<Subscription, Error>) -> Void) {
+        do {
             
-            let newIdentifier = self.identifierRepository.Add(element: UUID())
+            if (self.tokenRepository.exist() == false) {
+                throw InstallationError.EmptyOrNullToken
+            }
             
-            self.CheckIfTokenExist() { result in
-                switch result {
-                    case .success(let token):
-                        SubscriptionService.shared.Create(newIdentifier, config.application, token , linked, identity) { result in
-                            switch result {
-                            case .success(let id):
-                                completion(.success(id))
-                                
-                            case .failure(let error):
-                                completion(.failure(error))
-                            }
-                        }
+            guard let token = self.tokenRepository.get() else {
+                throw InstallationError.InvalidToken
+            }
+            
+            guard let identifier = self.getIdentifier() else {
+                throw InstallationError.InvalidIdentifier
+            }
+            
+            guard let installationId = UUID(uuidString: identifier) else {
+                throw InstallationError.InvalidIdentifier
+            }
+            
+            let subscription = Subscription(
+                id:  installationId,
+                application: self.config.application,
+                gateway: Gateway(token: token),
+                linked: linked
+            );
+                        
+            self.subscriptionApi.put(subscription) { result in
+                switch(result) {
+                    case .success(let subscription):
+                        completion(.success(subscription))
                     case .failure(let error):
                         completion(.failure(error))
                 }
             }
             
-            
-        }
-    
-    public func Update(
-        _ identifier: UUID,
-        _ config: Config,
-        _ linked: Linked,
-        _ identity: String,
-        completion: @escaping (Result<Subscription, Error>) -> Void) {
-            self.CheckIfTokenExist() { result in
-                switch result {
-                case .success(let token):
-                    SubscriptionService.shared.Update(identifier, config.application, token, linked, identity) { result in
-                        switch result {
-                        case .success(let subscription):
-                            completion(.success(subscription))
-                            
-                        case .failure(let error):
-                            completion(.failure(error))
-                        }
-                    }
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-            
-        }
-    
-    
-    public func CheckInstallation(completion: @escaping (Result<UUID, Error>)->Void) {
-        IdentifierService.shared.Get { result in
-            switch result {
-            case .success(let id):
-                completion(.success(id))
-            case .failure(let error):
-                completion(.failure(error))
-            }
+        } catch {
+            completion(.failure(error))
         }
     }
 }

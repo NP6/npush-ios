@@ -21,7 +21,7 @@ public class Config: NSObject {
     public var application: UUID;
     
     @objc
-    public init(_ identity: String, application: UUID) {
+    public init(identity: String, application: UUID) {
         self.identity = identity
         self.application = application
     }

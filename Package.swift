@@ -14,10 +14,10 @@ let package = Package(
     targets: [
         .target(
             name: "npush",
-            dependencies: [
-            ]),
+            dependencies: []
+        ),
         .testTarget(
             name: "npushTests",
-            dependencies: ["npush"]),
+            dependencies: [ "npush"]),
     ]
 )
