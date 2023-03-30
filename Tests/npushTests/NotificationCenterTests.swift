@@ -148,15 +148,13 @@ final class NotificationCenterTests: XCTestCase {
                     "body": "hello"
                 ]
             ]
-            
-            _ = try NPNotificationCenter.parseRender(userInfo: data)
-            
-        } catch {
-            guard let error = error as? DecodingError else {
-                XCTFail("Unexpected error: \(error)")
-                return
+                        
+            XCTAssertThrowsError(try NPNotificationCenter.parseRender(userInfo: data)) { error in
+                XCTAssert(true)
             }
-            XCTAssert(true)
+
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
     
