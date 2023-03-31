@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by bisenbrandt on 21/09/2022.
 //
@@ -10,15 +10,28 @@ import Foundation
 
 
 public class Logger {
-    
-    private static var label: String = "np6-messaging"
-        
+            
     public static func info(_ message: String) -> Void {
-        print("\(self.label) INFO : \(message)")
+        do {
+            let log = Log<String>(type: LogType.Info, value: message)
+            
+            let json = try JSONEncoder().encode(log)
+            
+            print("\(String(decoding: json, as: UTF8.self))")
+            
+        } catch {
+            print(error)
+        }
     }
     
     public static func error(_ message: String) -> Void {
-        print("\(self.label) ERROR : \(message)")
+        do {
+            let log = Log<String>(type: LogType.Info, value: message)
+            
+            let json = try JSONEncoder().encode(log)
+            
+            print("\(String(decoding: json, as: UTF8.self))")
+        } catch {}
     }
 
 }
