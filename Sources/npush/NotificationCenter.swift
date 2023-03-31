@@ -117,6 +117,18 @@ public class NPNotificationCenter {
             
         }
     }
+
+    @available(iOS 10.0, *)
+    public static func createDefaultCategory(_ name: String) {
+        let defaultCategory = UNNotificationCategory(
+            identifier: name,
+            actions: [],
+            intentIdentifiers: [],
+            options: .customDismissAction
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([defaultCategory])
+    }
+
 }
 
 

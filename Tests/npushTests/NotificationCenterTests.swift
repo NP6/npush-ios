@@ -34,7 +34,7 @@ final class NotificationCenterTests: XCTestCase {
                     "version": "e211fc95-108f-45d3-9378-78acda9e7b00",
                     "application": "c5d6993f-7e81-4039-8755-5b82694bf473",
                     "stamp": [
-                        "time": 1680094750509,
+                        "time": 168000509,
                         "id": "533fe44a-45f3-4853-93f8-eabd4487a13c",
                         "thread": "4a8d8d85-9445-4734-928c-d2a165ec1202",
                         "set": "cc9a9d2d-1686-4c98-be0c-70c9a84ac3e2"
@@ -168,7 +168,7 @@ final class NotificationCenterTests: XCTestCase {
                     "version": "e211fc95-108f-45d3-9378-78acda9e7b00",
                     "application": "c5d6993f-7e81-4039-8755-5b82694bf473",
                     "stamp": [
-                        "time": 1680094750509,
+                        "time": 1680450509,
                         "id": "533fe44a-45f3-4853-93f8-eabd4487a13c",
                         "thread": "4a8d8d85-9445-4734-928c-d2a165ec1202",
                         "set": "cc9a9d2d-1686-4c98-be0c-70c9a84ac3e2"
@@ -224,7 +224,7 @@ final class NotificationCenterTests: XCTestCase {
                     "version": "e211fc95-108f-45d3-9378-78acda9e7b00",
                     "application": "c5d6993f-7e81-4039-8755-5b82694bf473",
                     "stamp": [
-                        "time": 1680094750509,
+                        "time": 1680094759,
                         "id": "533fe44a-45f3-4853-93f8-eabd4487a13c",
                         "thread": "4a8d8d85-9445-4734-928c-d2a165ec1202",
                         "set": "cc9a9d2d-1686-4c98-be0c-70c9a84ac3e2"
@@ -277,7 +277,7 @@ final class NotificationCenterTests: XCTestCase {
                     "version": "e211fc95-108f-45d3-9378-78acda9e7b00",
                     "application": "c5d6993f-7e81-4039-8755-5b82694bf473",
                     "stamp": [
-                        "time": 1680094750509,
+                        "time": 168009409,
                         "id": "533fe44a-45f3-4853-93f8-eabd4487a13c",
                         "thread": "4a8d8d85-9445-4734-928c-d2a165ec1202",
                         "set": "cc9a9d2d-1686-4c98-be0c-70c9a84ac3e2"

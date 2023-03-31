@@ -20,16 +20,8 @@ public class NPush: NSObject {
     
     @objc
     public func initialize(config: Config) -> Void {
-        
         self.config = config;
-
         UIApplication.shared.registerForRemoteNotifications()
-        
-        let defaultCategory = NotificationService.createDefaultCategory("Default_Notification_Category")
-        UNUserNotificationCenter.current().setNotificationCategories([defaultCategory])
-        TokenRepository
-            .create()
-            .add(element: "fzejfpezofejzpfojezpofjezjfpozejfpoezjfozejfpozejpfozpojze")
     }
     
     public func setContact(type: ContactType, value: String) {

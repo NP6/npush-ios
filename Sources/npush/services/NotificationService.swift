@@ -26,14 +26,7 @@ public class NotificationService {
         case success
         case failed(Error)
     }
-    
-    public static func createDefaultCategory(_ name: String) ->  UNNotificationCategory {
-        return UNNotificationCategory(identifier: name,
-            actions: [],
-            intentIdentifiers: [],
-            options: .customDismissAction)
-    }
-    
+        
     public static func getDeeplink(_ userInfo : [AnyHashable : Any]) throws -> String {
         
         guard  let meta = userInfo["meta"] as? [AnyHashable : Any] else {
