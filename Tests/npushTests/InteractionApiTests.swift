@@ -62,7 +62,7 @@ final class InteractionApiTests: XCTestCase {
                   return
                 }
                 
-                XCTAssertEqual(error, InteractionApi.ApiError.NilOrBadHttpResponseCode, "Parsing error was expected.")
+                XCTAssertEqual(error, InteractionApi.ApiError.NilOrBadHttpResponseCode, "http error was expected.")
             }
             self.expectation.fulfill()
         }
@@ -86,7 +86,7 @@ final class InteractionApiTests: XCTestCase {
                   return
                 }
                 
-                XCTAssertEqual(error, InteractionApi.ApiError.DataTaskFailure, "Parsing error was expected.")
+                XCTAssertEqual(error, InteractionApi.ApiError.DataTaskFailure, "Datatask error was expected.")
             }
             self.expectation.fulfill()
 

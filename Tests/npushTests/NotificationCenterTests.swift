@@ -43,7 +43,7 @@ final class NotificationCenterTests: XCTestCase {
                 ]
             ]
             
-            let meta = try NPNotificationCenter.parseMeta(userInfo: data)
+            let meta = try NPNotificationCenter.initialize().parseMeta(userInfo: data)
             
             XCTAssertEqual(meta.redirection, "app://npush/product2")
             XCTAssertEqual(meta.notification, 205)
@@ -62,7 +62,7 @@ final class NotificationCenterTests: XCTestCase {
                 ]
             ]
             
-            _ = try NPNotificationCenter.parseMeta(userInfo: data)
+            _ = try NPNotificationCenter.initialize().parseMeta(userInfo: data)
             
             XCTFail("Unexpected success")
 
@@ -90,7 +90,7 @@ final class NotificationCenterTests: XCTestCase {
                 ]
             ]
             
-            let tracking = try NPNotificationCenter.parseTracking(userInfo: data)
+            let tracking = try NPNotificationCenter.initialize().parseTracking(userInfo: data)
             
             XCTAssertEqual(tracking.radical, "https://np6-tracking/hit/MCOM/032/gz/-VYJaJmpojUweyhpUXrdQgQp-3H-QM21OVbD4k-/link/")
             XCTAssertEqual(tracking.impression, "NrN2DOxRend-jubzj5PDwoYI0fQRAmLaPrhbMPiQtv5b2mxicJnh6A06n_w_pWoZmMqfaM_5d8Uc52bMzEW1Lx0ZrbPP")
@@ -109,7 +109,7 @@ final class NotificationCenterTests: XCTestCase {
                 ]
             ]
             
-            _ = try NPNotificationCenter.parseTracking(userInfo: data)
+            _ = try NPNotificationCenter.initialize().parseTracking(userInfo: data)
             
             XCTFail("Unexpected success")
 
@@ -131,7 +131,7 @@ final class NotificationCenterTests: XCTestCase {
                 ]
             ]
             
-            let render = try NPNotificationCenter.parseRender(userInfo: data)
+            let render = try NPNotificationCenter.initialize().parseRender(userInfo: data)
             
             XCTAssertEqual(render.title, "world")
             XCTAssertEqual(render.body, "hello")
@@ -149,7 +149,7 @@ final class NotificationCenterTests: XCTestCase {
                 ]
             ]
                         
-            XCTAssertThrowsError(try NPNotificationCenter.parseRender(userInfo: data)) { error in
+            XCTAssertThrowsError(try NPNotificationCenter.initialize().parseRender(userInfo: data)) { error in
                 XCTAssert(true)
             }
 
@@ -193,9 +193,9 @@ final class NotificationCenterTests: XCTestCase {
             
             let response = try UNNotificationResponse.with(userInfo: data, actionIdentifier: UNNotificationDefaultActionIdentifier)
             
-            let notification = try NPNotificationCenter.parse(data)
+            let notification = try NPNotificationCenter.initialize().parse(data)
             
-            let action = try NPNotificationCenter.getAction(notification: notification, response: response)
+            let action = try NPNotificationCenter.initialize().getAction(notification: notification, response: response)
             
             
             guard let redirectionAction = action as? RedirectionAction else {
@@ -249,9 +249,9 @@ final class NotificationCenterTests: XCTestCase {
             
             let response = try UNNotificationResponse.with(userInfo: data, actionIdentifier: UNNotificationDismissActionIdentifier)
             
-            let notification = try NPNotificationCenter.parse(data)
+            let notification = try NPNotificationCenter.initialize().parse(data)
             
-            let action = try NPNotificationCenter.getAction(notification: notification, response: response)
+            let action = try NPNotificationCenter.initialize().getAction(notification: notification, response: response)
             
             
             guard let dismissAction = action as? DismissAction else {
@@ -302,10 +302,10 @@ final class NotificationCenterTests: XCTestCase {
             
             let response = try UNNotificationResponse.with(userInfo: data, actionIdentifier: "unknow")
             
-            let notification = try NPNotificationCenter.parse(data)
+            let notification = try NPNotificationCenter.initialize().parse(data)
             
             
-            XCTAssertThrowsError(try NPNotificationCenter.getAction(notification: notification, response: response)) { error in
+            XCTAssertThrowsError(try NPNotificationCenter.initialize().getAction(notification: notification, response: response)) { error in
                 XCTAssertEqual(error as! NPNotificationCenter.NotificationError, NPNotificationCenter.NotificationError.UnknowNotificationAction)
             }
             
