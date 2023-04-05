@@ -8,9 +8,9 @@ let package = Package(
         .library(
             name: "npush",
             targets: ["npush"]),
+        
     ],
-    dependencies: [
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "npush",

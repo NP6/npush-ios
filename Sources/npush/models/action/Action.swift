@@ -47,3 +47,5 @@ public class DismissAction : TrackingAction {}
 
 public class ImpressionAction : TrackingAction {}
 
+public class OptoutAction : TrackingAction {}
+

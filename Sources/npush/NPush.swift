@@ -8,6 +8,7 @@ import UIKit
 @available(iOS 10.0, *)
 public class NPush: NSObject {
     
+    public var logger: Logger = ConsoleLogger()
     
     public weak var deeplinkDelegate: NPushDeeplinkDelegate?;
     
@@ -22,12 +23,13 @@ public class NPush: NSObject {
     public func initialize(config: Config) -> Void {
         self.config = config;
         UIApplication.shared.registerForRemoteNotifications()
-        NPNotificationCenter.createDefaultCategory("Default_Notification_Category")
+        NPNotificationCenter.createDefaultCategory(NPNotificationCenter.NOTIFICATION_DEFAULT_CATEGORY)
     }
     
     public func setContact(type: ContactType, value: String) {
         
         guard let config = self.config else {
+            self.logger.error("config must be specified")
             return;
         }
         
@@ -38,10 +40,10 @@ public class NPush: NSObject {
             .subscribe(contact) { result in
             switch result {
                 case .success(_):
-                    Logger.info("Subscription created successfully")
+                    self.logger.info("Subscription created successfully")
                     
                 case .failure(let error):
-                    Logger.error("Subscription creation failed \(error)")
+                    self.logger.error("Subscription creation failed \(error)")
             }
         }
     }
@@ -60,38 +62,44 @@ public class NPush: NSObject {
     @objc
     public func willPresent(_ userInfo: [AnyHashable : Any]) -> Void {
         do {
+            
+            let NPNotificationCenter  = NPNotificationCenter.initialize();
+            
             let notification: Notification =  try NPNotificationCenter.parse(userInfo)
             
             NPNotificationCenter.handle(notification: notification, completion: { result in
                 switch (result) {
                 case .success():
-                    Logger.info("notification action tracked successfully")
+                    self.logger.info("notification action tracked successfully")
                     
                 case .failure(let error):
-                    Logger.error("failed to track notification action \(error.localizedDescription)")
+                    self.logger.error("failed to track notification action \(error.localizedDescription)")
                 }
             })
         } catch {
-            Logger.error("failed to track notification action \(error.localizedDescription)")
+            self.logger.error("failed to track notification action \(error.localizedDescription)")
         }
     }
     
     @objc
     public func didReceive(_ response: UNNotificationResponse) {
         do {
+            
+            let NPNotificationCenter  = NPNotificationCenter.initialize();
+
             let notification: Notification = try NPNotificationCenter.parse(response.notification.request.content.userInfo)
             
             NPNotificationCenter.handle(notification: notification, response: response) { result in
                 switch (result) {
                 case .success():
-                    Logger.info("notification action tracked successfully")
+                    self.logger.info("notification action tracked successfully")
                     
                 case .failure(let error):
-                    Logger.error("failed to track notification action \(error.localizedDescription)")
+                    self.logger.error("failed to track notification action \(error.localizedDescription)")
                 }
             }
         } catch {
-            Logger.error("unexpected error occured : \(error.localizedDescription)")
+            self.logger.error("unexpected error occured : \(error.localizedDescription)")
         }
     }
     

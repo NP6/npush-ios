@@ -10,13 +10,32 @@ import UserNotifications
 import UIKit
 
 public class NPNotificationCenter {
+    
+    public var logger: Logger = ConsoleLogger();
+     
+    
+    public var interactionApi: InteractionApi;
+    
+    
+    public static let NOTIFICATION_DEFAULT_CATEGORY = "Default_Notification_Category"
 
     public enum NotificationError : Error {
         case InvalidNotification
         case UnknowNotificationAction
     }
+    
+    public static func initialize() -> NPNotificationCenter {
         
-    public static func parse(_ userInfo : [AnyHashable : Any]) throws -> Notification {
+        let interactionApi = InteractionApi.create();
+        
+        return NPNotificationCenter(interactionApi)
+    }
+    
+    public init(_ interactionApi: InteractionApi) {
+        self.interactionApi = interactionApi;
+    }
+        
+    public func parse(_ userInfo : [AnyHashable : Any]) throws -> Notification {
         
         let tracking = try parseTracking(userInfo: userInfo)
         
@@ -32,7 +51,7 @@ public class NPNotificationCenter {
     }
     
     @available(iOS 10.0, *)
-    public static func handle(
+    public func handle(
         notification: Notification,
         response: UNNotificationResponse,
         completion: @escaping (Result<Void, Error>) -> Void
@@ -47,7 +66,7 @@ public class NPNotificationCenter {
                 launchDeeplink(deeplink: redirection.deeplink)
             }
             
-            InteractionApi.create().get(action.radical, action.value, completion: completion)
+            self.interactionApi.get(action.radical, action.value, completion: completion)
 
         } catch {
             completion(.failure(error))
@@ -55,7 +74,7 @@ public class NPNotificationCenter {
     }
     
     @available(iOS 10.0, *)
-    public static func launchDeeplink(deeplink: String) {
+    public func launchDeeplink(deeplink: String) {
         
         if (NPush.instance.deeplinkDelegate != nil) {
             
@@ -65,34 +84,58 @@ public class NPNotificationCenter {
         }
         
         guard let url = URL(string: deeplink) else {
-            Logger.error("Failed to parse deeplink \(deeplink)")
+            self.logger.error("Failed to parse deeplink \(deeplink)")
             return;
         }
         
         UIApplication.shared.open(url, options: [:]) { result in
             if (result == false) {
-                Logger.error("Failed to launch deeplink \(deeplink)")
+                self.logger.error("Failed to launch deeplink \(deeplink)")
                 return;
             }
         }
     }
     
     @available(iOS 10.0, *)
-    public static func handle(
+    public func handle(
         notification: Notification,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         
-        let impression =  ImpressionAction(
-            value: notification.tracking.impression,
-            radical: notification.tracking.radical
-        )
-        
-        InteractionApi.create().get(impression.radical, impression.value, completion: completion)
+        let current = UNUserNotificationCenter.current()
+
+        current.getNotificationSettings { settings in
+            switch(settings.authorizationStatus) {
+                
+                case .authorized:
+                    let impression = ImpressionAction(
+                        value: notification.tracking.impression,
+                        radical: notification.tracking.radical
+                    )
+                    
+                    self.interactionApi.get(impression.radical, impression.value, completion: completion)
+
+            case .denied:
+                let optout = OptoutAction(
+                    value: notification.tracking.optout.global,
+                    radical: notification.tracking.radical
+                )
+                
+                self.interactionApi.get(optout.radical, optout.value, completion: completion)
+            case .ephemeral:
+                break;
+            case .notDetermined:
+                break;
+            case .provisional:
+                break;
+            @unknown default:
+                break;
+            }
+        }
     }
     
     @available(iOS 10.0, *)
-    public static func getAction(
+    public func getAction(
         notification: Notification,
         response: UNNotificationResponse
     ) throws -> TrackingAction {
@@ -136,7 +179,7 @@ public class NPNotificationCenter {
 extension NPNotificationCenter {
     
     
-    public static func parseMeta(userInfo: [AnyHashable : Any]) throws -> Meta {
+    public func parseMeta(userInfo: [AnyHashable : Any]) throws -> Meta {
         
         guard let meta = userInfo["meta"] as? [AnyHashable : Any] else {
             throw NotificationError.InvalidNotification
@@ -147,7 +190,7 @@ extension NPNotificationCenter {
         return try JSONDecoder().decode(Meta.self, from: json)
     }
     
-    public static func parseRender(userInfo: [AnyHashable : Any]) throws -> Render {
+    public func parseRender(userInfo: [AnyHashable : Any]) throws -> Render {
         
         guard let render = userInfo["render"] as? [AnyHashable : Any] else {
             throw NotificationError.InvalidNotification
@@ -159,7 +202,7 @@ extension NPNotificationCenter {
     }
     
     
-    public static func parseTracking(userInfo: [AnyHashable : Any]) throws -> Tracking {
+    public func parseTracking(userInfo: [AnyHashable : Any]) throws -> Tracking {
         
         guard let tracking = userInfo["tracking"] as? [AnyHashable : Any] else {
             throw NotificationError.InvalidNotification
