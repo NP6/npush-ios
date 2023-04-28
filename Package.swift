@@ -4,11 +4,12 @@ import PackageDescription
 
 let package = Package(
     name: "npush",
+    platforms: [.iOS(.v15)],
     products: [
         .library(
             name: "npush",
-            targets: ["npush"]),
-        
+            targets: ["npush"]
+        ),
     ],
     dependencies: [],
     targets: [
@@ -18,6 +19,7 @@ let package = Package(
         ),
         .testTarget(
             name: "npushTests",
-            dependencies: [ "npush"]),
+            dependencies: [ "npush"]
+        ),
     ]
 )

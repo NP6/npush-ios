@@ -14,12 +14,10 @@ public class Notification {
     
     public var tracking: Tracking;
     
-    public var render: Render;
     
-    public init(meta: Meta, tracking: Tracking, render: Render) {
+    public init(meta: Meta, tracking: Tracking) {
         self.meta = meta
         self.tracking = tracking
-        self.render = render
     }
     
 }

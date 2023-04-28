@@ -12,16 +12,17 @@ import UIKit
 public class NPNotificationCenter {
     
     public var logger: Logger = ConsoleLogger();
-     
+    
     
     public var interactionApi: InteractionApi;
     
     
     public static let NOTIFICATION_DEFAULT_CATEGORY = "Default_Notification_Category"
-
+    
     public enum NotificationError : Error {
         case InvalidNotification
         case UnknowNotificationAction
+        case NotImplementedNotificationStatus
     }
     
     public static func initialize() -> NPNotificationCenter {
@@ -34,19 +35,17 @@ public class NPNotificationCenter {
     public init(_ interactionApi: InteractionApi) {
         self.interactionApi = interactionApi;
     }
-        
+    
     public func parse(_ userInfo : [AnyHashable : Any]) throws -> Notification {
         
         let tracking = try parseTracking(userInfo: userInfo)
         
         let meta = try parseMeta(userInfo: userInfo)
         
-        let render = try parseRender(userInfo: userInfo)
         
         return Notification(
             meta: meta,
-            tracking: tracking,
-            render: render
+            tracking: tracking
         )
     }
     
@@ -62,12 +61,12 @@ public class NPNotificationCenter {
             if (action is RedirectionAction) {
                 
                 let redirection = action as! RedirectionAction
-
+                
                 launchDeeplink(deeplink: redirection.deeplink)
             }
             
             self.interactionApi.get(action.radical, action.value, completion: completion)
-
+            
         } catch {
             completion(.failure(error))
         }
@@ -103,18 +102,18 @@ public class NPNotificationCenter {
     ) {
         
         let current = UNUserNotificationCenter.current()
-
+        
         current.getNotificationSettings { settings in
             switch(settings.authorizationStatus) {
                 
-                case .authorized:
-                    let impression = ImpressionAction(
-                        value: notification.tracking.impression,
-                        radical: notification.tracking.radical
-                    )
-                    
-                    self.interactionApi.get(impression.radical, impression.value, completion: completion)
-
+            case .authorized:
+                let impression = ImpressionAction(
+                    value: notification.tracking.impression,
+                    radical: notification.tracking.radical
+                )
+                
+                self.interactionApi.get(impression.radical, impression.value, completion: completion)
+                
             case .denied:
                 let optout = OptoutAction(
                     value: notification.tracking.optout.global,
@@ -123,12 +122,16 @@ public class NPNotificationCenter {
                 
                 self.interactionApi.get(optout.radical, optout.value, completion: completion)
             case .ephemeral:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             case .notDetermined:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             case .provisional:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             @unknown default:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             }
         }
@@ -144,23 +147,23 @@ public class NPNotificationCenter {
             
         case UNNotificationDefaultActionIdentifier:
             return RedirectionAction(
-                    value: notification.tracking.redirection,
-                    radical: notification.tracking.radical,
-                    deeplink: notification.meta.redirection
-                )
-
+                value: notification.tracking.redirection,
+                radical: notification.tracking.radical,
+                deeplink: notification.meta.redirection
+            )
+            
         case UNNotificationDismissActionIdentifier:
             return DismissAction(
-                    value: notification.tracking.dismiss,
-                    radical: notification.tracking.radical
-                )
+                value: notification.tracking.dismiss,
+                radical: notification.tracking.radical
+            )
             
         default:
             throw NotificationError.UnknowNotificationAction
             
         }
     }
-
+    
     @available(iOS 10.0, *)
     public static func createDefaultCategory(_ name: String) {
         let defaultCategory = UNNotificationCategory(
@@ -171,7 +174,7 @@ public class NPNotificationCenter {
         )
         UNUserNotificationCenter.current().setNotificationCategories([defaultCategory])
     }
-
+    
 }
 
 
@@ -189,18 +192,6 @@ extension NPNotificationCenter {
         
         return try JSONDecoder().decode(Meta.self, from: json)
     }
-    
-    public func parseRender(userInfo: [AnyHashable : Any]) throws -> Render {
-        
-        guard let render = userInfo["render"] as? [AnyHashable : Any] else {
-            throw NotificationError.InvalidNotification
-        }
-        
-        let json = try JSONSerialization.data(withJSONObject: render, options: .prettyPrinted)
-        
-        return try JSONDecoder().decode(Render.self, from: json)
-    }
-    
     
     public func parseTracking(userInfo: [AnyHashable : Any]) throws -> Tracking {
         
