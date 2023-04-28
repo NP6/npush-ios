@@ -66,7 +66,6 @@ public class SubscriptionApi {
             
             let body = try JSONEncoder().encode(subscription)
             
-            print(String(bytes: body, encoding: .utf8))
             request.httpBody = body
 
             self.session.dataTask(with: request, completionHandler: { data, response, error in
