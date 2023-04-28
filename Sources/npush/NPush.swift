@@ -16,7 +16,7 @@ public class NPush: NSObject {
     public static let instance: NPush = NPush();
     
     private var config: Config? = nil;
-        
+    
     private override init() {}
     
     @objc
@@ -38,55 +38,68 @@ public class NPush: NSObject {
         Installation
             .create(config)
             .subscribe(contact) { result in
-            switch result {
+                switch result {
                 case .success(_):
                     self.logger.info("Subscription created successfully")
                     
                 case .failure(let error):
-                    self.logger.error("Subscription creation failed \(error)")
+                    self.logger.error("Subscription creation failed \(error.localizedDescription)")
+                }
             }
-        }
     }
     
     @objc
     public func handleRegistrationToken(deviceToken: Data) {
-        _ = TokenRepository
-            .create()
-            .add(element: deviceToken.map {
-                String(format: "%02.2hhx", $0)
-            }.joined())
+        let data = deviceToken.map { String(format: "%02.2hhx", $0) }
+        
+        let token = data.joined()
+        
+        TokenRepository.create().add(element: token)
     }
     
-    
-    
     @objc
-    public func willPresent(_ userInfo: [AnyHashable : Any]) -> Void {
+    public func didReceive(request: UNNotificationRequest, contentHandler: ((UNNotificationContent) -> Void)?) {
         do {
+            let content = (request.content.mutableCopy() as? UNMutableNotificationContent)
             
-            let NPNotificationCenter  = NPNotificationCenter.initialize();
+            guard let contentHandler = contentHandler else {
+                self.logger.warning("nil contentHandler argument")
+                return;
+            }
+            guard let attemptContent = content else { self.logger.error("failed to get valid content"); return; }
             
-            let notification: Notification =  try NPNotificationCenter.parse(userInfo)
+            let userInfo = attemptContent.userInfo
+            
+            let NPNotificationCenter = NPNotificationCenter.initialize();
+            
+            let notification: Notification = try NPNotificationCenter.parse(userInfo)
             
             NPNotificationCenter.handle(notification: notification, completion: { result in
                 switch (result) {
                 case .success():
                     self.logger.info("notification action tracked successfully")
+                    contentHandler(attemptContent)
                     
                 case .failure(let error):
                     self.logger.error("failed to track notification action \(error.localizedDescription)")
+                    contentHandler(attemptContent)
                 }
             })
         } catch {
-            self.logger.error("failed to track notification action \(error.localizedDescription)")
+            self.logger.error("unexpected error occured : \(error.localizedDescription)")
+            guard let contentHandler = contentHandler else {
+                return;
+            }
+            contentHandler(request.content)
         }
     }
     
     @objc
-    public func didReceive(_ response: UNNotificationResponse) {
+    public func didReceive(response: UNNotificationResponse) {
         do {
             
             let NPNotificationCenter  = NPNotificationCenter.initialize();
-
+            
             let notification: Notification = try NPNotificationCenter.parse(response.notification.request.content.userInfo)
             
             NPNotificationCenter.handle(notification: notification, response: response) { result in
@@ -102,19 +115,5 @@ public class NPush: NSObject {
             self.logger.error("unexpected error occured : \(error.localizedDescription)")
         }
     }
-    
-    @objc
-    public static func requestNotificationAuthorization(_ currentApplication: UIApplication) -> Void {
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-            options: authOptions,
-            completionHandler: { value, error in
-                if (error != nil) {
-                }
-            }
-        )
-        currentApplication.registerForRemoteNotifications()
-    }
-    
 }
 

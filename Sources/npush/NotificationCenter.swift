@@ -22,6 +22,7 @@ public class NPNotificationCenter {
     public enum NotificationError : Error {
         case InvalidNotification
         case UnknowNotificationAction
+        case NotImplementedNotificationStatus
     }
     
     public static func initialize() -> NPNotificationCenter {
@@ -41,12 +42,10 @@ public class NPNotificationCenter {
         
         let meta = try parseMeta(userInfo: userInfo)
         
-        let render = try parseRender(userInfo: userInfo)
         
         return Notification(
             meta: meta,
-            tracking: tracking,
-            render: render
+            tracking: tracking
         )
     }
     
@@ -123,12 +122,16 @@ public class NPNotificationCenter {
                 
                 self.interactionApi.get(optout.radical, optout.value, completion: completion)
             case .ephemeral:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             case .notDetermined:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             case .provisional:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             @unknown default:
+                completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
             }
         }
@@ -189,18 +192,6 @@ extension NPNotificationCenter {
         
         return try JSONDecoder().decode(Meta.self, from: json)
     }
-    
-    public func parseRender(userInfo: [AnyHashable : Any]) throws -> Render {
-        
-        guard let render = userInfo["render"] as? [AnyHashable : Any] else {
-            throw NotificationError.InvalidNotification
-        }
-        
-        let json = try JSONSerialization.data(withJSONObject: render, options: .prettyPrinted)
-        
-        return try JSONDecoder().decode(Render.self, from: json)
-    }
-    
     
     public func parseTracking(userInfo: [AnyHashable : Any]) throws -> Tracking {
         

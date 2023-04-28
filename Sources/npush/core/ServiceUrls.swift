@@ -14,8 +14,8 @@ enum ServiceUrls {
         static let SubscriptionEndpoint = "http://cm-push.kube.dev.np6.com/api/v1.0/"
         static let TelemetryEnpoint = "http://telemetry.kube.dev.np6.com/api/v1.0/"
 #else
-        static let SubscriptionEndpoint = "http://cm-push.kube.dev.np6.com/api/v1.0/"
-        static let TelemetryEnpoint = "http://telemetry.kube.dev.np6.com/api/v1.0/"
+        static let SubscriptionEndpoint = "https://subscriptions.np6.com/api/v1.0/"
+        static let TelemetryEnpoint = "https://telemetry.np6.com/api/v1.0/"
 #endif
     }
 }
