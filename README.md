@@ -19,6 +19,55 @@ Whe are going to review all the steps needed to be done before installing NPush 
 Before continuing, you need to add remote push notification permissions for your application. If you haven't done this step before please follow this 
 [tutorial]().
 
+### add dependency 
+
+Right click on project tree -> Add Packages -> tap **https://github.com/NP6/npush-ios/** in search bar
+and get latest swift package dependency
+
+
+### Add Notification Service Extension
+
+Click on File -> Target -> Notification Service Extension , choose a product name and cancel service scheme activation. 
+
+Note : don't forget to add sdk dependency to this target. 
+
+### Swift
+
+```swift 
+class NotificationService: UNNotificationServiceExtension {
+
+    var contentHandler: ((UNNotificationContent) -> Void)?
+
+    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        self.contentHandler = contentHandler
+        
+        NPush.instance.didReceive(request: request, contentHandler: contentHandler)
+    }
+}
+
+```
+
+### Objective-c
+
+```objective-c
+
+#import "NotificationService.h"
+
+@interface NotificationService ()
+
+@property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
+@property (nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
+
+@end
+
+@implementation NotificationService
+
+- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
+    self.contentHandler = contentHandler;    
+}
+
+@end
+```
 
 ### Add AppDelegate 
 
@@ -61,16 +110,45 @@ struct demoApp: App {
 ```
 
 
-### add dependency 
-
-Right click on project tree -> Add Packages -> tap **https://github.com/NP6/npush-ios/** in search bar
-and get latest swift package dependency
-
-
-
 ## Installation 
 
+### implement notification service extension methods
 
+### swift 
+```swift 
+...
+    var contentHandler: ((UNNotificationContent) -> Void)?
+
+    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        self.contentHandler = contentHandler
+        
+        NPush.instance.didReceive(request: request, contentHandler: contentHandler)
+    }
+    
+    ...
+
+```
+
+### objective-c 
+```objective-c
+@interface NotificationService ()
+
+@property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
+
+@end
+
+@implementation NotificationService
+
+- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
+    self.contentHandler = contentHandler;
+    NPush *npush = [NPush instance];
+    [npush didReceiveWithRequest:request contentHandler: contentHandler];
+
+}
+
+@end
+
+```
 ### implement specific AppDelegate methods
 
 In your application delegate add following lines of code :
@@ -189,7 +267,13 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 
 @end
 ```
+### implement specific Notification Service methods
 
+In your notification service add following lines of code :
+
+```
+
+```
 
 ### Attach contact to device subscription 
 
