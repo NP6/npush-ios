@@ -49,8 +49,6 @@ class NotificationService: UNNotificationServiceExtension {
 
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
-        
-        NPush.instance.didReceive(request: request, contentHandler: contentHandler)
     }
 }
 ```
@@ -178,7 +176,7 @@ struct demoApp: App {
 
 - (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
     self.contentHandler = contentHandler;
-    NPush *npush = [NPush instance];
+        NPush *npush = [NPush instance];
     [npush didReceiveWithRequest:request contentHandler: contentHandler];
 
 }
@@ -192,7 +190,6 @@ struct demoApp: App {
 
 In your application delegate add following lines of code :
 
-#### Swift
 
 Create and set your configuration 
 
@@ -203,13 +200,17 @@ Create and set your configuration
 ```swift 
 class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-      NPush.requestNotificationAuthorization(application)
-      
-      let config = Config("<identity>", application: UUID(uuidString: "<application-id>") ?? throw ...)
-      NPush.instance.InitWithConfig(config: config)
-
-      return true;
+        func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+         
+        // request notification permission 
+        
+        UNUserNotificationCenter.current().delegate = self
+            
+        let config = Config.init(identity: "<identity>", application: UUID(uuidString: "<application id>") ?? UUID())
+        
+        NPush.instance.initialize(config: config)
+        
+        return true;
     }
     
     ...
@@ -219,46 +220,83 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 
 </details>
 
+<details>
+
+<summary>Objetive-c</summary>
+
+```objective-c 
+@interface AppDelegate () <UNUserNotificationCenterDelegate>
+
+
+@end
+
+@implementation AppDelegate
+
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+    
+    
+    NSUUID *uuid = [[NSUUID UUID] initWithUUIDString:@""];
+    
+    Config* config = [[Config alloc] initWithIdentity:@"MCOM032" application: uuid];
+    
+    NPush *npush = [NPush instance];
+    
+    [npush initializeWithConfig: config];
+    
+    return YES;
+}
+
+...
+
+```
+
+</details>
+
+
 Handle delegate Notification Center  
 
 <details>
 
-<summary>Objective-c</summary>
+<summary>swift</summary>
+
 ```swift 
 class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     ...
-        func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
         defer {
             completionHandler(.newData)
         }
-        NPush.instance.willPresent(userInfo)
+        
+        NPush.instance.didReceiveRemoteNotification(application, userInfo: userInfo)
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         defer {
             completionHandler()
         }
-        NPush.instance.didReceive(response)
+        NPush.instance.didReceive(response: response)
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        defer {
-            completionHandler([.badge, .alert])
-        }
-        NPush.instance.willPresent(notification.request.content.userInfo)
+        
+        completionHandler([.alert, .badge, .banner, .sound])
     }
     
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        NPush.instance.SetToken(deviceToken: deviceToken)
 
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NPush.instance.handleRegistrationToken(deviceToken: deviceToken)
     }
-    
+
     ...
 }
 
 ```
-
 
 </details>
 
@@ -279,48 +317,24 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 @implementation AppDelegate
 
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // Request notifications authorizations 
-    [NPush requestNotificationAuthorization:application];
-
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
-
-
-    NSUUID *uuid = [[NSUUID UUID] initWithUUIDString:@"<application-id>"];
-
-    Config* config = [[Config alloc] init:@"<identity>" application: uuid];
-    
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
     NPush *npush = [NPush instance];
-    
-    [npush InitWithConfigWithConfig:config];
-    return YES;
-}
-
-- (void)application:(UIApplication*)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)devToken
-{
-    [NPush SetTokenWithDeviceToken:devToken];
-}
-
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-{
-    [NPush willPresent:userInfo];
-    completionHandler(UIBackgroundFetchResultNewData);
+    [npush didReceiveRemoteNotification:application userInfo:userInfo];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
-    [NPush willPresent:notification.request.content.userInfo];
-    completionHandler(UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
+    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionList);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler
 {
-    [NPush didReceive:response];
+    NPush *npush = [NPush instance];
+    [npush didReceiveWithResponse:response];
     completionHandler();
 }
-
-@end
 ```
 
 
