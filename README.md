@@ -7,6 +7,12 @@ This library is a part of NP6 Push Notifications service, it allow you to intera
 ## Table of content
 1.	[Prerequisites](https://github.com/NP6/npush-ios#prerequisites)
 2.	[Installation](https://github.com/NP6/npush-ios#installation)
+    * [Notification Service]()
+    * [App Delegate]()
+    * [Contact Subscription]()
+        * [Native implementation]()
+        * [React native implementation]()
+        * [Flutter implementation]()
 3.	[Troubleshooting]()
 
 
@@ -29,11 +35,14 @@ and get latest swift package dependency
 
 Click on File -> Target -> Notification Service Extension , choose a product name and cancel service scheme activation. 
 
+
 Note : don't forget to add sdk dependency to this target. 
 
-### Swift
+<details>
 
-```swift 
+<summary>Swift</summary>
+    
+```swift
 class NotificationService: UNNotificationServiceExtension {
 
     var contentHandler: ((UNNotificationContent) -> Void)?
@@ -44,11 +53,14 @@ class NotificationService: UNNotificationServiceExtension {
         NPush.instance.didReceive(request: request, contentHandler: contentHandler)
     }
 }
-
 ```
 
-### Objective-c
+</details>
+                        
+<details>
 
+<summary>Objective-c</summary>
+    
 ```objective-c
 
 #import "NotificationService.h"
@@ -69,11 +81,21 @@ class NotificationService: UNNotificationServiceExtension {
 @end
 ```
 
+
+</details>
+
+ 
+### Objective-c
+
 ### Add AppDelegate 
 
 Add the following lines of code to your project. If your already have an application delegate, skip this part.
 
-#### Swift 
+<details>
+
+<summary>Swift</summary>
+    
+    
 ```swift 
 class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -91,7 +113,11 @@ struct demoApp: App {
 }
 ```
 
-#### Objective-c 
+</details>
+
+<details>
+
+<summary>Objective-c</summary>
 
 ```objective-c 
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
@@ -107,14 +133,20 @@ struct demoApp: App {
 
 
 @end
-```
+```    
+    
+</details>
+
 
 
 ## Installation 
 
-### implement notification service extension methods
+### Implement notification service extension methods
 
-### swift 
+<details>
+
+<summary>Swift</summary>
+    
 ```swift 
 ...
     var contentHandler: ((UNNotificationContent) -> Void)?
@@ -128,8 +160,13 @@ struct demoApp: App {
     ...
 
 ```
+    
+</details>
 
-### objective-c 
+<details>
+
+<summary>Objective-c</summary>
+
 ```objective-c
 @interface NotificationService ()
 
@@ -147,15 +184,21 @@ struct demoApp: App {
 }
 
 @end
-
 ```
-### implement specific AppDelegate methods
+
+</details>
+
+### Implement specific AppDelegate methods
 
 In your application delegate add following lines of code :
 
 #### Swift
 
 Create and set your configuration 
+
+<details>
+
+<summary>Swift</summary>
 
 ```swift 
 class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -174,8 +217,13 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 
 ```
 
+</details>
+
 Handle delegate Notification Center  
 
+<details>
+
+<summary>Objective-c</summary>
 ```swift 
 class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
@@ -210,6 +258,13 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 }
 
 ```
+
+
+</details>
+
+<details>
+
+<summary>Objective-c</summary>
 
 ```objective-c
 
@@ -267,13 +322,9 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 
 @end
 ```
-### implement specific Notification Service methods
 
-In your notification service add following lines of code :
 
-```
-
-```
+</details>
 
 ### Attach contact to device subscription 
 
@@ -286,11 +337,20 @@ Please be sure to have one of this 3 identifiers in your user representation bef
 
 ##### Example attaching device subscription by hash
 
-```swift
+<details>
+
+<summary>Swift</summary>
+
+  ```swift
 
       NPush.instance.SetContact(type: .HashRepresentation, value: <hash>)
 
 ```
+</details>
+    
+<details>
+
+<summary>Objective-c</summary>
 
 ```objective-c
 
@@ -300,13 +360,25 @@ Please be sure to have one of this 3 identifiers in your user representation bef
 
 ```
 
+</details>
+
 ##### Example attaching device subscription by unicity
+
+<details>
+
+<summary>Swift</summary>
 
 ```swift
 
       NPush.instance.SetContact(type: .UnicityRepresentation, value:<unicity>)
 
 ```
+
+</details>
+
+<details>
+
+<summary>Objective-c</summary>
 
 ```objective-c
 
@@ -316,13 +388,25 @@ Please be sure to have one of this 3 identifiers in your user representation bef
 
 ```
 
+</details>
+
 ##### Example attaching device subscription by id
+
+<details>
+
+<summary>Swift</summary>
 
 ```swift
 
       NPush.instance.SetContact(type: .IdRepresentation, value:<id>)
 
 ```
+
+</details>
+
+<details>
+
+<summary>Objective-c</summary>
 
 ```objective-c
 
@@ -331,3 +415,5 @@ Please be sure to have one of this 3 identifiers in your user representation bef
     [npush SetContactWithType :ContactTypeIdRepresentation value:@<id>];
 
 ```
+
+</details>
