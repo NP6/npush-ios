@@ -11,7 +11,7 @@ This library is a part of NP6 Push Notifications service, it allow you to intera
     * [App Delegate]()
     * [Contact Subscription]()
         * [Native implementation]()
-        * [React native implementation]()
+        * [React native implementation](https://github.com/NP6/npush-ios/#react-native-implementation)
         * [Flutter implementation]()
 3.	[Troubleshooting]()
 
@@ -25,7 +25,7 @@ Whe are going to review all the steps needed to be done before installing NPush 
 Before continuing, you need to add remote push notification permissions for your application. If you haven't done this step before please follow this 
 [tutorial]().
 
-### add dependency 
+### Add dependency 
 
 Right click on project tree -> Add Packages -> tap **https://github.com/NP6/npush-ios/** in search bar
 and get latest swift package dependency
@@ -335,7 +335,9 @@ We could only identify the users by hash, id or unicity criteria.
 
 Please be sure to have one of this 3 identifiers in your user representation before continue. 
 
-##### Example attaching device subscription by hash
+#### Native implementation
+
+Example attaching device subscription by hash
 
 <details>
 
@@ -362,7 +364,7 @@ Please be sure to have one of this 3 identifiers in your user representation bef
 
 </details>
 
-##### Example attaching device subscription by unicity
+Example attaching device subscription by unicity
 
 <details>
 
@@ -390,7 +392,7 @@ Please be sure to have one of this 3 identifiers in your user representation bef
 
 </details>
 
-##### Example attaching device subscription by id
+Example attaching device subscription by id
 
 <details>
 
@@ -417,3 +419,128 @@ Please be sure to have one of this 3 identifiers in your user representation bef
 ```
 
 </details>
+
+### React Native Implementation 
+
+### Create react package  
+
+Declare a new ReactPackage by creating a new file implementation file called **NPushModule.h**
+
+<details>
+
+<summary>Objective-c</summary>
+
+```objective-c
+#import <React/RCTBridgeModule.h>
+@interface RCTNPushModule : NSObject <RCTBridgeModule>
+@end
+```
+
+</details>
+
+let’s start implementing the native module. Create the corresponding implementation file, RCTNPushModule.m, in the same folder and include the following content:
+
+<details>
+
+<summary>Objective-c</summary>
+
+```objective-c
+#import <Foundation/Foundation.h>
+#import "RCTNPushModule.h"
+
+@implementation RCTNPushModule
+
+// To export a module named RCTNPushModule
+RCT_EXPORT_MODULE(RCTNPushModule);
+
+@end
+```
+
+</details>
+
+The native module can then be accessed in JS like this:
+
+<details>
+
+<summary>javascript</summary>
+
+```objective-c
+const {NPushModule} = ReactNative.NativeModules;
+```
+
+</details>
+
+### Implement contact methods   
+
+Use one of these functions depending on the type of credential you are using.
+
+Example attaching device subscription by hash
+
+<details>
+
+<summary>Objective-c</summary>
+
+```objective-c
+RCT_EXPORT_METHOD(setContactByHash:(NSString *)hash)
+{
+    [npush SetContact :ContactTypeUnicityRepresentation value:@<hash>];
+}
+```
+
+</details>
+
+ Example attaching device subscription by unicity
+ 
+ <details>
+
+<summary>Objective-c</summary>
+
+```objective-c
+RCT_EXPORT_METHOD(setContactByUnicity:(NSString *)unicity)
+{
+    [npush SetContact :ContactTypeUnicityRepresentation value:@<unicity>];
+}
+```
+
+</details>
+
+Example attaching device subscription by id
+ 
+<details>
+
+<summary>Objective-c</summary>
+
+```objective-c
+RCT_EXPORT_METHOD(setContactById:(NSString *)id)
+{
+    [npush SetContact :ContactTypeIdRepresentation value:@<id>];
+}
+```
+
+</details>
+
+The last step is calling one of previous declarated methods in react native as follow :
+</details>
+
+Example attaching device subscription by id
+ 
+<details>
+
+<summary>javascript</summary>
+
+``` javascript
+// Example using native module attaching device subscription by id 
+const {NPushModule} = ReactNative.NativeModules;
+...  
+ NPushModule.setContactById('000T39KL');
+...  
+```
+
+</details>
+
+If everything is done. You will see the following lines in your application log :
+
+```
+I/np6-messaging: Subscription created successfully
+```
+
