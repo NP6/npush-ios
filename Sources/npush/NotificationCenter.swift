@@ -95,11 +95,33 @@ public class NPNotificationCenter {
         }
     }
     
-    @available(iOS 10.0, *)
-    public func handle(
-        notification: Notification,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
+    public func isNotificationActive(completion: @escaping (Bool) -> Void) {
+        let current = UNUserNotificationCenter.current()
+        
+        current.getNotificationSettings { settings in
+            switch(settings.authorizationStatus) {
+            case .authorized:
+                completion(true)
+            case .denied:
+                completion(false)
+            case .ephemeral:
+                completion(true)
+                break;
+            case .notDetermined:
+                completion(false)
+                break;
+            case .provisional:
+                completion(true)
+                break;
+            @unknown default:
+                completion(false)
+                break;
+            }
+        }
+
+    }
+    
+    public func getActionFromNotificationSettings(notification: Notification, completion: @escaping (Result<TrackingAction, Error>) -> Void) {
         
         let current = UNUserNotificationCenter.current()
         
@@ -111,18 +133,19 @@ public class NPNotificationCenter {
                     value: notification.tracking.impression,
                     radical: notification.tracking.radical
                 )
-                
-                self.interactionApi.get(impression.radical, impression.value, completion: completion)
-                
+                completion(.success(impression))
             case .denied:
                 let optout = OptoutAction(
                     value: notification.tracking.optout.global,
                     radical: notification.tracking.radical
                 )
-                
-                self.interactionApi.get(optout.radical, optout.value, completion: completion)
+                completion(.success(optout))
             case .ephemeral:
-                completion(.failure(NotificationError.NotImplementedNotificationStatus))
+                let impression = ImpressionAction(
+                    value: notification.tracking.impression,
+                    radical: notification.tracking.radical
+                )
+                completion(.success(impression))
                 break;
             case .notDetermined:
                 completion(.failure(NotificationError.NotImplementedNotificationStatus))
@@ -133,6 +156,21 @@ public class NPNotificationCenter {
             @unknown default:
                 completion(.failure(NotificationError.NotImplementedNotificationStatus))
                 break;
+            }
+        }
+    }
+    
+    @available(iOS 10.0, *)
+    public func handle(
+        notification: Notification,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        getActionFromNotificationSettings(notification: notification) { result in
+            switch(result) {
+                case .success(let action):
+                    self.interactionApi.get(action.radical, action.value, completion: completion)
+                case .failure(let error):
+                    completion(.failure(error))
             }
         }
     }
