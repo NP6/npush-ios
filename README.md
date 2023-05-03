@@ -534,9 +534,103 @@ const {NPushModule} = ReactNative.NativeModules;
 ...  
  NPushModule.setContactById('000T39KL');
 ...  
+
 ```
 
 </details>
+
+### Flutter Implementation
+
+
+### Create Flutter module 
+
+Let's create a new dart class called NPush and add a new method as follow : 
+<details>
+
+<summary>dart</summary>
+
+```dart
+class NPush {
+  static const platform = MethodChannel('np6.messaging.npush/contact');
+
+  Future<void> setContactById(String value) async {
+    var result = await platform
+        .invokeMethod('SetContactWithUnicityValue', {"value": value});
+
+    return result;
+  }
+}
+```
+
+</details>
+
+### Create native channel
+
+
+Open the AppDelegate.swift file and override **application:didFinishLaunchingWithOptions:** as follow :
+
+<details>
+
+<summary>swift</summary>
+
+```swift
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+      let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+
+      let npushChannel = FlutterMethodChannel(name: "np6.messaging.npush/contact", binaryMessenger: controller.binaryMessenger)
+      npushChannel.setMethodCallHandler({
+      (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+      
+         
+         
+      })    
+      
+      GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+```
+
+</details>
+
+Next, Add the following code depending the kind of contact identification needed in this example we are gonna use an id representation :
+
+<details>
+
+<summary>swift</summary>
+
+```swift
+      ...
+
+      npushChannel.setMethodCallHandler({
+      (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+            
+          guard call.method == "SetContactById" else {
+            result(FlutterMethodNotImplemented)
+            return
+          }
+
+          if let args = call.arguments as? Dictionary<String, Any>,
+            let value = args["value"] as? String {
+            
+              NPush.instance.SetContact(type: ContactType.IdRepresentation, value: value)
+              
+              result(nil)
+          } else {
+            result(FlutterError.init(code: "errorSetContact", message: "data or format error", details: nil))
+          }
+
+      })    
+   }
+   
+   ...
+
+```
+
+</details>
+
 
 If everything is done. You will see the following lines in your application log :
 
