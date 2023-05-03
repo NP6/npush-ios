@@ -1,5 +1,5 @@
 # NPush SDK for IOS 
-NP6 IOS SDK for Push Notification - The game changing libraries for building Blazingly fast 🚀 Highly interactives notification user experiences. Made with ❤️ 
+NP6 IOS SDK for Push Notification
 
 ## Introduction 
 This library is a part of NP6 Push Notifications service, it allow you to interact with your users via Push Notifications sended via NP6 CM. 
@@ -541,10 +541,11 @@ const {NPushModule} = ReactNative.NativeModules;
 
 ### Flutter Implementation
 
-
+ 
 ### Create Flutter module 
 
-Let's create a new dart class called NPush and add a new method as follow : 
+Let's create a new dart class called **NPush.dart** and add a new method as follow : 
+    
 <details>
 
 <summary>dart</summary>
@@ -553,9 +554,9 @@ Let's create a new dart class called NPush and add a new method as follow :
 class NPush {
   static const platform = MethodChannel('np6.messaging.npush/contact');
 
-  Future<void> setContactById(String value) async {
+  static Future<void> setContactById(String value) async {
     var result = await platform
-        .invokeMethod('SetContactWithUnicityValue', {"value": value});
+        .invokeMethod('SetContactById', {"value": value});
 
     return result;
   }
@@ -564,8 +565,7 @@ class NPush {
 
 </details>
 
-### Create native channel
-
+### Implement native channel
 
 Open the AppDelegate.swift file and override **application:didFinishLaunchingWithOptions:** as follow :
 
@@ -626,12 +626,23 @@ Next, Add the following code depending the kind of contact identification needed
    }
    
    ...
-
 ```
 
 </details>
 
+The call the dart module **NPush.dart** inside the flutter application : 
+   
+<details>
 
+<summary>dart</summary>
+
+```dart
+NPush.setContactById("000T315");
+```
+
+</details>
+ 
+ 
 If everything is done. You will see the following lines in your application log :
 
 ```
