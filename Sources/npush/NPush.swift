@@ -21,8 +21,11 @@ public class NPush: NSObject {
     
     @objc
     public func initialize(config: Config) -> Void {
+        
         self.config = config;
+        
         UIApplication.shared.registerForRemoteNotifications()
+        
         NPNotificationCenter.createDefaultCategory(NPNotificationCenter.NOTIFICATION_DEFAULT_CATEGORY)
     }
     
@@ -39,7 +42,7 @@ public class NPush: NSObject {
             .create(config)
             .subscribe(contact) { result in
                 switch result {
-                case .success(_):
+                case .success(let subscription):
                     self.logger.info("Subscription created successfully")
                     
                 case .failure(let error):
@@ -53,7 +56,7 @@ public class NPush: NSObject {
         let data = deviceToken.map { String(format: "%02.2hhx", $0) }
         
         let token = data.joined()
-        
+
         TokenRepository.create().add(element: token)
     }
     
@@ -94,6 +97,7 @@ public class NPush: NSObject {
         }
     }
     
+    
     @objc
     public func didReceive(response: UNNotificationResponse) {
         do {
@@ -110,6 +114,33 @@ public class NPush: NSObject {
                 case .failure(let error):
                     self.logger.error("failed to track notification action \(error.localizedDescription)")
                 }
+            }
+        } catch {
+            self.logger.error("unexpected error occured : \(error.localizedDescription)")
+        }
+    }
+    
+    @objc
+    public func didReceiveRemoteNotification(_ application: UIApplication, userInfo: [AnyHashable : Any]) {
+        
+        do {
+            let NPNotificationCenter  = NPNotificationCenter.initialize()
+            
+            let notification: Notification = try NPNotificationCenter.parse(userInfo)
+            
+            NPNotificationCenter.isNotificationActive() { areNotificationActive in
+                if areNotificationActive {
+                    return;
+                }
+                NPNotificationCenter.handle(notification: notification, completion: { result in
+                    switch (result) {
+                    case .success():
+                        self.logger.info("notification action tracked successfully")
+                        
+                    case .failure(let error):
+                        self.logger.error("failed to track notification action \(error.localizedDescription)")
+                    }
+                })
             }
         } catch {
             self.logger.error("unexpected error occured : \(error.localizedDescription)")
