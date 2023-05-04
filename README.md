@@ -13,7 +13,7 @@ This library is a part of NP6 Push Notifications service, it allow you to intera
         * [Native implementation](#native-implementation)
         * [React native implementation](#implement-contact-methods)
         * [Flutter implementation](#flutter-implementation)
-
+3.	[Advanced](#advanced)
 
 ## Prerequisites
 We will go through all the necessary steps that need to be completed prior to installing the NPush SDK.
@@ -440,6 +440,13 @@ Example attaching device subscription by id
 
 </details>
 
+
+If everything is done. You will see the following lines in your application log :
+
+```
+Subscription created successfully
+```
+
 &nbsp;
 &nbsp;
 &nbsp;
@@ -541,6 +548,12 @@ const {NPushModule} = ReactNative.NativeModules;
 ```
 
 </details>
+
+If everything is done. You will see the following lines in your application log :
+
+```
+Subscription created successfully
+```
 
 &nbsp;
 &nbsp;
@@ -649,6 +662,19 @@ NPush.setContactById("000T315");
 If everything is done. You will see the following lines in your application log :
 
 ```
-I/np6-messaging: Subscription created successfully
+Subscription created successfully
+```
+
+## Advanced 
+
+### Deeplinking 
+
+In order to handle deeplink by our way, make your implement NPushDeeplinkDelegate protocol and set a custom deeplink interceptor as follow : 
+
+
+```java
+    func handleDeeplink(deeplink: String) {
+        print("delegate called");
+    }
 ```
 
