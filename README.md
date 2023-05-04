@@ -17,7 +17,7 @@ This library is a part of NP6 Push Notifications service, it allow you to intera
 
 
 ## Prerequisites
-Whe are going to review all the steps needed to be done before installing NPush SDK.
+We will go through all the necessary steps that need to be completed prior to installing the NPush SDK.
 
 
 ### Apple Push Notifications certificates
@@ -27,16 +27,15 @@ Before continuing, you need to add remote push notification permissions for your
 
 ### Add dependency 
 
-Right click on project tree -> Add Packages -> tap **https://github.com/NP6/npush-ios/** in search bar
-and get latest swift package dependency
+To integrate the NPush SDK for iOS using the latest Swift package dependency, you can follow these steps: 
+Firstly, right-click on the project tree, then choose "Add Packages." Next, use the search bar to locate https://github.com/NP6/npush-ios/.
+After you have found it, click on it to add the latest Swift package dependency.
+
 
 
 ### Add Notification Service Extension
 
-Click on File -> Target -> Notification Service Extension , choose a product name and cancel service scheme activation. 
-
-
-Note : don't forget to add sdk dependency to this target. 
+To configure the Notification Service Extension, navigate to the "File" menu, select "Target," and choose "Notification Service Extension." From there, choose a suitable product name and disable the service scheme activation. It's crucial to add the SDK dependency to this target. Please keep this in mind.
 
 <details>
 
@@ -83,11 +82,9 @@ class NotificationService: UNNotificationServiceExtension {
 </details>
 
  
-### Objective-c
-
 ### Add AppDelegate 
 
-Add the following lines of code to your project. If your already have an application delegate, skip this part.
+If you do not have an existing application delegate, add the following lines of code to your project. However, if you already have one, you may skip this step.
 
 <details>
 
@@ -141,6 +138,8 @@ struct demoApp: App {
 
 ### Implement notification service extension methods
 
+You can implement the notification service extension methods by following these steps:
+
 <details>
 
 <summary>Swift</summary>
@@ -186,12 +185,9 @@ struct demoApp: App {
 
 </details>
 
-### Implement specific AppDelegate methods
+### Initialize SDK
 
-In your application delegate add following lines of code :
-
-
-Create and set your configuration 
+To create and set your configuration in the application delegate, you can add the following code snippet:
 
 <details>
 
@@ -255,8 +251,12 @@ class MyAppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDe
 
 </details>
 
+In this code, you can replace <identity> with the identity of your configuration, and <application id> with the ID of your application. Once you have set up your configuration, you can call the initialize method of the NPush instance to initialize your SDK.
 
-Handle delegate Notification Center  
+
+### Implement Notification Center delegate
+
+You can handle the Notification Center delegate methods in your application delegate by adding the following code:
 
 <details>
 
@@ -340,14 +340,14 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 
 </details>
 
+In this code, you can handle the didReceiveRemoteNotification, didReceive, willPresent, and didRegisterForRemoteNotificationsWithDeviceToken delegate methods of the Notification Center by calling the corresponding methods of the NPush instance. This allows you to handle various notification events and integrate them into your application's functionality.
+
+
 ### Attach contact to device subscription 
 
-Suppose we have an application with a login & register form and we want to attach the current device subscription to the logged user.
-We could only identify the users by hash, id or unicity criteria. 
+If you want to attach the current device subscription to the logged-in user in your application, you need to have a way to identify the user. This can be achieved through a hash, an ID, or any unique identifier associated with the user in the NP6 CM platform.
 
-**Note : All of these identifiers are strongly linked to the NP6 CM platform.**
-
-Please be sure to have one of this 3 identifiers in your user representation before continue. 
+Please note that these identifiers are specific to the NP6 CM platform. Before proceeding, make sure that you have one of these identifiers in your user representation. This will enable you to attach the device subscription to the correct user.
 
 #### Native implementation
 
@@ -436,9 +436,11 @@ Example attaching device subscription by id
 
 ### React Native Implementation 
 
+To implement NPush SDK in your React Native application, follow these steps:
+
 ### Create react package  
 
-Declare a new ReactPackage by creating a new file implementation file called **NPushModule.h**
+Create a new file implementation file called NPushModule.h.
 
 <details>
 
@@ -452,7 +454,7 @@ Declare a new ReactPackage by creating a new file implementation file called **N
 
 </details>
 
-let’s start implementing the native module. Create the corresponding implementation file, RCTNPushModule.m, in the same folder and include the following content:
+Create a new implementation file called RCTNPushModule.m in the same folder.
 
 <details>
 
@@ -471,6 +473,9 @@ RCT_EXPORT_MODULE(RCTNPushModule);
 ```
 
 </details>
+
+This code sets up the basic structure of the module and exports it with the name "RCTNPushModule".
+
 
 The native module can then be accessed in JS like this:
 
@@ -558,7 +563,7 @@ const {NPushModule} = ReactNative.NativeModules;
  
 ### Create Flutter module 
 
-Let's create a new dart class called **NPush.dart** and add a new method as follow : 
+To implement the NPush SDK in Flutter, you can create a new dart class called NPush.dart and add the following method to it:
     
 <details>
 
@@ -579,9 +584,24 @@ class NPush {
 
 </details>
 
+This method uses the MethodChannel class to communicate with the native platform, and the setContactById function takes a string parameter, which should be the identifier of the user you want to attach the device subscription to.
+
+To use this method, simply import the NPush.dart file into your Flutter project and call the setContactById function with the appropriate user identifier value.
+
+
 ### Implement native channel
 
-Open the AppDelegate.swift file and override **application:didFinishLaunchingWithOptions:** as follow :
+To implement the native channel for Flutter, you'll need to open the AppDelegate.swift file and override the application(_:didFinishLaunchingWithOptions:) method.
+
+First, create a FlutterViewController and get the binaryMessenger property from it.
+
+Next, create a FlutterMethodChannel with a unique name (in this example, we use np6.messaging.npush/contact). Set the method call handler for this channel to handle incoming method calls.
+
+In this example, we create a SetContactById method call to set the user's contact by ID. We guard against any other method calls and return FlutterMethodNotImplemented if the method name doesn't match.
+
+We then extract the value of the contact from the arguments passed in the method call and set the contact using NPush.instance.SetContact(type: ContactType.IdRepresentation, value: value).
+
+If there are any errors during the process, we return a FlutterError.
 
 <details>
 
@@ -598,30 +618,7 @@ Open the AppDelegate.swift file and override **application:didFinishLaunchingWit
       npushChannel.setMethodCallHandler({
       (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       
-         
-         
-      })    
-      
-      GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
-```
-
-</details>
-
-Next, Add the following code depending the kind of contact identification needed in this example we are gonna use an id representation :
-
-<details>
-
-<summary>swift</summary>
-
-```swift
-      ...
-
-      npushChannel.setMethodCallHandler({
-      (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
-            
-          guard call.method == "SetContactById" else {
+         guard call.method == "SetContactById" else {
             result(FlutterMethodNotImplemented)
             return
           }
@@ -635,11 +632,12 @@ Next, Add the following code depending the kind of contact identification needed
           } else {
             result(FlutterError.init(code: "errorSetContact", message: "data or format error", details: nil))
           }
-
+         
       })    
-   }
-   
-   ...
+      
+      GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
 ```
 
 </details>
