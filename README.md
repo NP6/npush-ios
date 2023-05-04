@@ -671,10 +671,18 @@ Subscription created successfully
 
 In order to handle deeplink by our way, make your implement NPushDeeplinkDelegate protocol and set a custom deeplink interceptor as follow : 
 
+<details>
 
-```java
+<summary>swift</summary>
+
+```swift
     func handleDeeplink(deeplink: String) {
         print("delegate called");
     }
+
 ```
+
+</details>
+
+
 
