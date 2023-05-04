@@ -10,9 +10,9 @@ This library is a part of NP6 Push Notifications service, it allow you to intera
     * [Notification Service]()
     * [App Delegate]()
     * [Contact Subscription]()
-        * [Native implementation]()
-        * [React native implementation](https://github.com/NP6/npush-ios/#react-native-implementation)
-        * [Flutter implementation]()
+        * [Native implementation](https://github.com/NP6/npush-ios/tree/main#native-implementation)
+        * [React native implementation](https://github.com/NP6/npush-ios/tree/main#implement-contact-methods)
+        * [Flutter implementation](https://github.com/NP6/npush-ios/tree/main#flutter-implementation)
 3.	[Troubleshooting]()
 
 
@@ -356,7 +356,7 @@ If you want to attach the current device subscription to the logged-in user in y
 
 Please note that these identifiers are specific to the NP6 CM platform. Before proceeding, make sure that you have one of these identifiers in your user representation. This will enable you to attach the device subscription to the correct user.
 
-#### Native implementation
+### Native implementation
 
 Example attaching device subscription by hash
 
