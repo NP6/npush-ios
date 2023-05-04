@@ -7,8 +7,9 @@ This library is a part of NP6 Push Notifications service, it allow you to intera
 ## Table of content
 1.	[Prerequisites](#prerequisites)
 2.	[Installation](#installation)
-    * [Notification Service]()
-    * [App Delegate]()
+    * [Notification Service](#implement-notification-service-extension-methods)
+    * [Initialization](#initialize-sdk)
+    * [Notification Center Delegate](#implement-notification-center-delegate)
     * [Contact Subscription]()
         * [Native implementation](#native-implementation)
         * [React native implementation](#implement-contact-methods)
