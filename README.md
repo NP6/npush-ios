@@ -441,6 +441,14 @@ Example attaching device subscription by id
 
 </details>
 
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+
 ### React Native Implementation 
 
 To implement NPush SDK in your React Native application, follow these steps:
@@ -565,12 +573,12 @@ const {NPushModule} = ReactNative.NativeModules;
 
 </details>
 
-
-
-
-
-
-
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
 
 ### Flutter Implementation
 
