@@ -5,15 +5,14 @@ NP6 IOS SDK for Push Notification
 This library is a part of NP6 Push Notifications service, it allow you to interact with your users via Push Notifications sended via NP6 CM. 
 
 ## Table of content
-1.	[Prerequisites](https://github.com/NP6/npush-ios#prerequisites)
-2.	[Installation](https://github.com/NP6/npush-ios#installation)
+1.	[Prerequisites](#prerequisites)
+2.	[Installation](#installation)
     * [Notification Service]()
     * [App Delegate]()
     * [Contact Subscription]()
-        * [Native implementation](https://github.com/NP6/npush-ios/tree/main#native-implementation)
-        * [React native implementation](https://github.com/NP6/npush-ios/tree/main#implement-contact-methods)
-        * [Flutter implementation](https://github.com/NP6/npush-ios/tree/main#flutter-implementation)
-3.	[Troubleshooting]()
+        * [Native implementation](#native-implementation)
+        * [React native implementation](#implement-contact-methods)
+        * [Flutter implementation](#flutter-implementation)
 
 
 ## Prerequisites
@@ -506,37 +505,7 @@ const {NPushModule} = ReactNative.NativeModules;
 
 ### Implement contact methods   
 
-Use one of these functions depending on the type of credential you are using.
-
-Example attaching device subscription by hash
-
-<details>
-
-<summary>Objective-c</summary>
-
-```objective-c
-RCT_EXPORT_METHOD(setContactByHash:(NSString *)hash)
-{
-    [npush SetContact :ContactTypeUnicityRepresentation value:@<hash>];
-}
-```
-
-</details>
-
- Example attaching device subscription by unicity
- 
- <details>
-
-<summary>Objective-c</summary>
-
-```objective-c
-RCT_EXPORT_METHOD(setContactByUnicity:(NSString *)unicity)
-{
-    [npush SetContact :ContactTypeUnicityRepresentation value:@<unicity>];
-}
-```
-
-</details>
+Add a new function depending on the type of credential you are using.
 
 Example attaching device subscription by id
  
