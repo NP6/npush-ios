@@ -335,6 +335,13 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
     [npush didReceiveWithResponse:response];
     completionHandler();
 }
+
+-(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    NPush *npush = [NPush instance];
+    [npuh handleRegistrationTokenWithDeviceToken:deviceToken]
+
+}
 ```
 
 
