@@ -10,7 +10,7 @@ This library is a part of NP6 Push Notifications service, it allow you to intera
     * [Notification Service](#implement-notification-service-extension-methods)
     * [Initialization](#initialize-sdk)
     * [Notification Center Delegate](#implement-notification-center-delegate)
-    * [Contact Subscription]()
+    * [Contact Subscription](#initialize-sdk)
         * [Native implementation](#native-implementation)
         * [React native implementation](#implement-contact-methods)
         * [Flutter implementation](#flutter-implementation)
