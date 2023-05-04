@@ -352,9 +352,9 @@ In this code, you can handle the didReceiveRemoteNotification, didReceive, willP
 
 ### Attach contact to device subscription 
 
-If you want to attach the current device subscription to the logged-in user in your application, you need to have a way to identify the user. This can be achieved through a hash, an ID, or any unique identifier associated with the user in the NP6 CM platform.
+If you want to attach the current device subscription to the logged-in user in your application, you need to have a way to identify the user. This can be achieved through a hash, an ID, or any unique identifier associated with the user in the NP6 platform.
 
-Please note that these identifiers are specific to the NP6 CM platform. Before proceeding, make sure that you have one of these identifiers in your user representation. This will enable you to attach the device subscription to the correct user.
+Please note that these identifiers are specific to the NP6 platform. Before proceeding, make sure that you have one of these identifiers in your user representation. This will enable you to attach the device subscription to the correct user.
 
 ### Native implementation
 
