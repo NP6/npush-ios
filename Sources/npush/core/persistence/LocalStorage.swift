@@ -24,7 +24,7 @@ public class LocalStorage : LocalStorageAdapter {
     }
     
     public func remove(key: String) {
-        return remove(key: key)
+        return adapter.remove(key: key)
     }
     
     public func exist(key: String) -> Bool {
