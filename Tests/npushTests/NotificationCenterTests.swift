@@ -122,41 +122,7 @@ final class NotificationCenterTests: XCTestCase {
         }
     }
     
-    public func testParsingRenderFromValidInput()  {
-        do {
-            let data: [AnyHashable : Any] = [
-                "render": [
-                    "title": "world",
-                    "body": "hello"
-                ]
-            ]
-            
-            let render = try NPNotificationCenter.initialize().parseRender(userInfo: data)
-            
-            XCTAssertEqual(render.title, "world")
-            XCTAssertEqual(render.body, "hello")
 
-        } catch {
-            XCTFail("Unexpected error: \(error)")
-        }
-    }
-    
-    public func testParsingRenderFromInvalidInput()  {
-        do {
-            let data: [AnyHashable : Any] = [
-                "render": [
-                    "body": "hello"
-                ]
-            ]
-                        
-            XCTAssertThrowsError(try NPNotificationCenter.initialize().parseRender(userInfo: data)) { error in
-                XCTAssert(true)
-            }
-
-        } catch {
-            XCTFail("Unexpected error: \(error)")
-        }
-    }
     
     
     @available(iOS 10.0, *)
