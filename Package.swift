@@ -15,7 +15,10 @@ let package = Package(
     targets: [
         .target(
             name: "npush",
-            dependencies: []
+            dependencies: [],
+            resources: [
+                .process("PrivacyInfo.xcprivacy")
+            ]
         ),
         .testTarget(
             name: "npushTests",
